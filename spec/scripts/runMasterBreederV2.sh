@@ -1,0 +1,1 @@
+certoraRun spec/harnesses/MasterBreederV2Harness.sol spec/harnesses/DummyERC20A.sol spec/harnesses/DummyERC20B.sol spec/harnesses/DummyKANGA.sol --link MasterBreederV2Harness:KANGA=DummyKANGA --settings -assumeUnwindCond,-enableStorageAnalysis=true,-ciMode=true --verify MasterBreederV2Harness:spec/MasterBreederV2.spec --cache MasterBreederV2 --msg "MasterBreederV2"

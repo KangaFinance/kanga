@@ -1,0 +1,80 @@
+import { expect } from "chai";
+import { prepare, deploy, getBigNumber, createKLP, addLiquidityKLP } from "./utilities"
+
+describe("KangaMaker", function () {
+  before(async function () {
+    await prepare(this, ["ERC20Mock", "UniswapV2Factory", "UniswapV2Router02", "UniswapV2Pair"])
+  })
+
+  beforeEach(async function () {
+    await deploy(this, [
+      ["kanga", this.ERC20Mock, ["KANGA", "KANGA", getBigNumber("10000000")]],
+      ["dai", this.ERC20Mock, ["DAI", "DAI", getBigNumber("10000000")]],
+      ["mic", this.ERC20Mock, ["MIC", "MIC", getBigNumber("10000000")]],
+      ["usdc", this.ERC20Mock, ["USDC", "USDC", getBigNumber("10000000")]],
+      ["weth", this.ERC20Mock, ["WETH", "ETH", getBigNumber("10000000")]],
+      ["strudel", this.ERC20Mock, ["$TRDL", "$TRDL", getBigNumber("10000000")]],
+      ["factory", this.UniswapV2Factory, [this.alice.address]],
+    ])
+    await deploy(this, [["router", this.UniswapV2Router02, [this.factory.address, this.weth.address]]]),
+    await createKLP(this, "kangaEth", this.kanga, this.weth, getBigNumber(10))
+    console.log (`Alices Kanga Balance: ${await this.kanga.balanceOf(this.alice.address)}`)
+    // await createKLPRouter(this, "strudelEthRouter", this.strudel, this.usdc, getBigNumber(10), this.alice.address)
+
+  })
+  describe("checkInitHash", function () {
+    it ("checks the Init Hash is correct", async function () {
+
+      //This is the same code (with a "0x" prefix) used in uniswap/libraries/UniswapV2Library.sol getPair
+      // https://ethereum.stackexchange.com/questions/88075/uniswap-addliquidity-function-transaction-revert
+      const INIT_CODE_HASH = "0xb96a05d90581cfac1f99c92b02f2e69fbca4e5c26498be0dc204d91318c9f56b"
+      const COMPUTED_INIT_CODE_HASH = await this.factory.INIT_CODE_PAIR_HASH()
+      expect(COMPUTED_INIT_CODE_HASH).to.equal(INIT_CODE_HASH)
+
+      // Check a pair created by the factory
+      expect(await this.kangaEth.symbol()).to.equal("KLP")
+      expect(await this.kangaEth.name()).to.equal("Kanga LP Token")
+      console.log(`this.kangaEth.address: ${this.kangaEth.address}`)
+      console.log(`this.kanga.address: ${this.kanga.address}`)
+      console.log(`this.weth.address: ${this.weth.address}`)
+      console.log(`this.alice.address: ${this.alice.address}`)
+
+      // Check that getPair is getting the right address
+      // use addLiquidityKLP which calls get pair for kangaEth and check this against kangaEth.address
+      //Note if the Hash is wrong in getpair this will fail with a hard error as it cannot look up the reserves
+      //Error: Transaction reverted: function call to a non-contract account
+      // Sample args for addLiquidityETH creating a pool with 6 ONE and 1 BUSD
+      // args for addLiquidity: [
+      //   "0xc4860463C59D59a9aFAc9fdE35dff9Da363e8425",
+      //   "1000000000000000000",
+      //   "1000000000000000000",
+      //   "6000000000000000000",
+      //   "0x8875fc2A47E35ACD1784bB5f58f563dFE86A8451",
+      //   "0x6148d86c"]
+      // Sample args for addLiquidity creating a pool with 1 Kanga and 0.0001 ETH
+      // args for addLiquidity: [
+      //   "0xe1F9a8354E7122B1525d9037f3cb36FB77E54e2B",
+      //   "0x6D307636323688Cc3Fe618CcbA695eFC7a94f813",
+      //   "6000000000000000000",
+      //   "1000000000000000000",
+      //   "6000000000000000000",
+      //   "1000000000000000000",
+      //   "0x8875fc2A47E35ACD1784bB5f58f563dFE86A8451",
+      //   "0x6148daf2"]
+
+      await this.kanga.connect(this.alice).approve(this.router.address, "10000000000000000000")
+      await this.weth.connect(this.alice).approve(this.router.address, "10000000000000000000")
+      await addLiquidityKLP(this, "kangaEth", this.kanga, this.weth, "6000000000000000000", "6000000000000000000", "60000000000000000000", "6000000000000000000", this.alice.address)
+      console.log (`Alices Kanga Balance after addliquidity: ${await this.kanga.balanceOf(this.alice.address)}`)
+    })
+  })
+  describe("checkKLP", function () {
+    it("checks LP tokens have KLP symbol and name", async function () {
+
+
+      // expect(await this.strudelEthRouter.symbol()).to.equal("KLP")
+      // expect(await this.strudelEthRouter.name()).to.equal("Kanga LP Token")
+    }) 
+  })
+})
+
