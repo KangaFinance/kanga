@@ -1,7 +1,7 @@
  module.exports = async function ({ getNamedAccounts, deployments }) {
   const { deploy } = deployments
 
-  const { deployer } = await getNamedAccounts()
+  const { deployer, dev } = await getNamedAccounts()
 
   await deploy("KangaToken", {
     from: deployer,

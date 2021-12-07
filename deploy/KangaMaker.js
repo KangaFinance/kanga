@@ -1,4 +1,4 @@
-const { WETH } = require("@kangafinance/sdk")
+const { WETH } = require("@kangafinance/sdk-core")
 
 module.exports = async function ({ ethers: { getNamedSigner }, getNamedAccounts, deployments }) {
   const { deploy } = deployments

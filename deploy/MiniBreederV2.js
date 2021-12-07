@@ -4,7 +4,8 @@ const { ChainId } = require("@kangafinance/sdk")
 const KANGA = {
   [ChainId.MATIC]: '0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a',
   //TODO Need to update this after each deploy of KANGA Token
-  [ChainId.HARMONY_TESTNET]: '0xfC780aA287eddb7456A97cB18E7FD0d1a8d900ae'
+  [ChainId.KOVAN]: '0xA8805F7728D45b4FE135a4a44b965E2Eae91C964',
+  [ChainId.HARMONY_TESTNET]: '0xb62E57A930bDd4EC9bD01F9701690351eAf27Be3'
 }
 
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {

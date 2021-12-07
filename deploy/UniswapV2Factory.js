@@ -1,7 +1,6 @@
 // NOTE
 // You must do an initial deploy to generate the bytecode it looks like this
 
-/*
 module.exports = async function ({
   ethers,
   getNamedAccounts,
@@ -22,7 +21,6 @@ module.exports = async function ({
 
 module.exports.tags = ["UniswapV2Factory", "AMM"];
 
-*/
 
 //NOTE 
 // after the initial factory deploy you need to get the init_code_hash and update the uniswap library getPair
@@ -41,6 +39,9 @@ module.exports.tags = ["UniswapV2Factory", "AMM"];
 
 // After the initial deploy then use the following code
 // Defining bytecode and abi from original contract copied from harmony testnet deploy to ensure bytecode matches and it produces the same pair code hash
+
+
+/*
 const {
   bytecode,
   abi,
@@ -69,3 +70,5 @@ module.exports = async function ({
 };
 
 module.exports.tags = ["UniswapV2Factory", "AMM"];
+
+*/
