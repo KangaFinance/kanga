@@ -46,33 +46,19 @@ export async function createKLP(thisObject, name, tokenA, tokenB, amount) {
   await thisObject[name].mint(thisObject.alice.address)
 }
 
-export async function addLiquidityKLP(thisObject, name, tokenA, tokenB, amountA, amountB, minA, minB, account) {
-  // currencyA?.wrapped?.address ?? '',
-  // currencyB?.wrapped?.address ?? '',
-  // parsedAmountA.quotient.toString(),
-  // parsedAmountB.quotient.toString(),
-  // amountsMin[Field.CURRENCY_A].toString(),
-  // amountsMin[Field.CURRENCY_B].toString(),
-  // account,
-  // deadline.toHexString(),
+export async function addLiquidityKLP(thisObject, tokenA, tokenB, amountA, amountB, minA, minB, account) {
 
-  // console.log(`currencyA: ${JSON.stringify(tokenA.symbol())} ${JSON.stringify(tokenA.address)}`)
-  // console.log(`currencyB: ${JSON.stringify(thisObject.usdc.symbol())} ${JSON.stringify(tokenB.address)}`)
-  // console.log(`parsedAmountA: ${JSON.stringify(amount.toString())}`)
-  // console.log(`parsedAmountB: ${JSON.stringify(amount.toString())}`)
-  // console.log(` amountsMin[Field.CURRENCY_A]: ${JSON.stringify(getBigNumber(0).toString())}`)
-  // console.log(`amountsMin[Field.CURRENCY_B]: ${JSON.stringify(getBigNumber(0).toString())}`)
-  // console.log(`account: ${JSON.stringify(account)}`)
-  // console.log(`deadline: ${JSON.stringify(getBigNumber(10000000).toString())}`)
-  // console.log(`thisObject.factory.address: ${JSON.stringify(thisObject.factory.address)}`)
-  // console.log(`thisObject.router.address: ${JSON.stringify(thisObject.router.address)}`)
-  // console.log(`thisObject.uniswapPair.address: ${JSON.stringify(thisObject.uniswapPair.address)}`)
-  // console.log(`thisObject.uniswapV2ERC20.address: ${JSON.stringify(thisObject.uniswapV2ERC20.address)}`)
-  
   const gasEstimate = await thisObject.router.estimateGas.addLiquidity(tokenA.address, tokenB.address, amountA, amountB, minA, minB, account,  MaxUint256) 
-  console.log(`gasEstimate: ${JSON.stringify(gasEstimate)}`)
-  const createPairTx = await thisObject.router.addLiquidity(tokenA.address, tokenB.address, amountA, amountB, minA, minB, account,  MaxUint256)
-  // const createPairTx = await thisObject.router.addLiquidity(tokenA.address, tokenB.address, amount.toString(), amount.toString(), getBigNumber(0).toString(), getBigNumber(0).toString(), account,  MaxUint256)
+  // console.log(`gasEstimate: ${JSON.stringify(gasEstimate)}`)
+  const addLiquidityTx = await thisObject.router.addLiquidity(tokenA.address, tokenB.address, amountA, amountB, minA, minB, account,  MaxUint256)
+
+}
+
+export async function removeLiquidityKLP(thisObject, tokenA, tokenB, liquidity, minA, minB, account) {
+  
+  const gasEstimate = await thisObject.router.estimateGas.removeLiquidity(tokenA.address, tokenB.address, liquidity, minA, minB, account,  MaxUint256) 
+  // console.log(`gasEstimate: ${JSON.stringify(gasEstimate)}`)
+  const removeLiquidityTx = await thisObject.router.removeLiquidity(tokenA.address, tokenB.address, liquidity, minA, minB, account,  MaxUint256)
 
 }
 
@@ -80,7 +66,5 @@ export async function addLiquidityKLP(thisObject, name, tokenA, tokenB, amountA,
 export function getBigNumber(amount, decimals = 18) {
   return BigNumber.from(amount).mul(BigNumber.from(BASE_TEN).pow(decimals))
 }
-
-
 
 export * from "./time"

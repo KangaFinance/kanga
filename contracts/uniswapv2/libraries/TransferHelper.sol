@@ -6,6 +6,8 @@ pragma solidity >=0.6.0;
 
 // helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
 library TransferHelper {
+    bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
+
     function safeApprove(address token, address to, uint value) internal {
         // bytes4(keccak256(bytes('approve(address,uint256)')));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x095ea7b3, to, value));
@@ -19,10 +21,10 @@ library TransferHelper {
     }
 
     function safeTransferFrom(address token, address from, address to, uint value) internal {
-        console.log("safeTransferFromTokenAddress: %s", token);
-        console.log("safeTransferFromFrom: %s", from);
-        console.log("safeTransferFromTo: %s", to);
-        console.log("safeTransferFromValue: %d", value);
+        // console.log("safeTransferFromTokenAddress: %s", token);
+        // console.log("safeTransferFromFrom: %s", from);
+        // console.log("safeTransferFromTo: %s", to);
+        // console.log("safeTransferFromValue: %d", value);
         // bytes4(keccak256(bytes('transferFrom(address,address,uint256)')));
         (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0x23b872dd, from, to, value));
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'TransferHelper: TRANSFER_FROM_FAILED');

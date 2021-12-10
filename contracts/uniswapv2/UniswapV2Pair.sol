@@ -8,6 +8,7 @@ import './libraries/UQ112x112.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IUniswapV2Callee.sol';
+import "hardhat/console.sol";
 
 interface IMigrator {
     // Return the desired amount of liquidity token that the migrator wants.
@@ -77,6 +78,10 @@ contract UniswapV2Pair is UniswapV2ERC20 {
 
     // update reserves and, on the first call per block, price accumulators
     function _update(uint balance0, uint balance1, uint112 _reserve0, uint112 _reserve1) private {
+        console.log("balance0: %d",balance0);
+        console.log("balance1: %d",balance1);
+        console.log("_reserve0: %d",_reserve0);
+        console.log("_reserve1: %d",_reserve1);
         require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'UniswapV2: OVERFLOW');
         uint32 blockTimestamp = uint32(block.timestamp % 2**32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
@@ -96,14 +101,24 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         address feeTo = IUniswapV2Factory(factory).feeTo();
         feeOn = feeTo != address(0);
         uint _kLast = kLast; // gas savings
+        console.log("feeOn: %s",feeOn);
+        console.log("_klast: %d",_kLast);
+        console.log("_reserve0: %d",_reserve0);
+        console.log("_reserve1: %d",_reserve1);
+        // console.log("safeTransferFromTokenAddress: %s", token);
         if (feeOn) {
             if (_kLast != 0) {
                 uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
                 uint rootKLast = Math.sqrt(_kLast);
+                console.log("rootK: %d",rootK);
+                console.log("rootKLast: %d",rootKLast);
                 if (rootK > rootKLast) {
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
+                    console.log("numerator: %d",numerator);
                     uint denominator = rootK.mul(5).add(rootKLast);
+                    console.log("denominator: %d",denominator);
                     uint liquidity = numerator / denominator;
+                    console.log("liquidity: %d",liquidity);
                     if (liquidity > 0) _mint(feeTo, liquidity);
                 }
             }
@@ -115,11 +130,18 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     // this low-level function should be called from a contract which performs important safety checks
     function mint(address to) external lock returns (uint liquidity) {
         (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
+        console.log("_reserve0: %d",_reserve0);
+        console.log("_reserve1: %d",_reserve1);
         uint balance0 = IERC20Uniswap(token0).balanceOf(address(this));
+        console.log("balance0: %d",balance0);
         uint balance1 = IERC20Uniswap(token1).balanceOf(address(this));
+        console.log("balance1: %d",balance1);
         uint amount0 = balance0.sub(_reserve0);
+        console.log("amount0: %d",amount0);
         uint amount1 = balance1.sub(_reserve1);
+        console.log("amount1: %d",amount1);
 
+        // bool feeOn = _mintFee(uint112(balance0), uint112(balance1));
         bool feeOn = _mintFee(_reserve0, _reserve1);
         uint _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         if (_totalSupply == 0) {

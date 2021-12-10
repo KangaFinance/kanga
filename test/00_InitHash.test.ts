@@ -40,7 +40,6 @@ describe("KangaMaker", function () {
       console.log(`this.factory.INIT_CODE_PAIR_HASH(): ${await this.factory.INIT_CODE_PAIR_HASH()}`)
       expect(COMPUTED_INIT_CODE_HASH).to.equal(MANUAL_INIT_CODE_HASH)
     })
-/*
     // Currently there is a problem with INIT_CODE_HASH being different when calculated manually vs using the factory
     // Local testing works with the factory version
     // When deploying to harmony testnet it works with the manual version
@@ -58,9 +57,8 @@ describe("KangaMaker", function () {
 
     await this.kanga.connect(this.alice).approve(this.router.address, "10000000000000000000")
     await this.weth.connect(this.alice).approve(this.router.address, "10000000000000000000")
-    await addLiquidityKLP(this, "kangaEth", this.kanga, this.weth, "6000000000000000000", "6000000000000000000", "60000000000000000000", "6000000000000000000", this.alice.address)
+    await addLiquidityKLP(this, this.kanga, this.weth, "6000000000000000000", "6000000000000000000", "60000000000000000000", "6000000000000000000", this.alice.address)
     console.log (`Alices Kanga Balance after addliquidity: ${await this.kanga.balanceOf(this.alice.address)}`)
     })
-*/
   })
 })
