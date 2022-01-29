@@ -17,6 +17,11 @@ export async function increase(value) {
   await advanceBlock()
 }
 
+export async function getBlockTimestamp(blockNumber) {
+  const block = await ethers.provider.getBlock(blockNumber)
+  return BigNumber.from(block.timestamp)
+}
+
 export async function latest() {
   const block = await ethers.provider.getBlock("latest")
   return BigNumber.from(block.timestamp)

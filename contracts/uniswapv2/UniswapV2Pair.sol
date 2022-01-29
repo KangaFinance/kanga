@@ -107,20 +107,18 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         console.log("_reserve1: %d",_reserve1);
         // console.log("safeTransferFromTokenAddress: %s", token);
         if (feeOn) {
-            if (_kLast != 0) {
-                uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
-                uint rootKLast = Math.sqrt(_kLast);
-                console.log("rootK: %d",rootK);
-                console.log("rootKLast: %d",rootKLast);
-                if (rootK > rootKLast) {
-                    uint numerator = totalSupply.mul(rootK.sub(rootKLast));
-                    console.log("numerator: %d",numerator);
-                    uint denominator = rootK.mul(5).add(rootKLast);
-                    console.log("denominator: %d",denominator);
-                    uint liquidity = numerator / denominator;
-                    console.log("liquidity: %d",liquidity);
-                    if (liquidity > 0) _mint(feeTo, liquidity);
-                }
+            uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
+            uint rootKLast = Math.sqrt(_kLast);
+            console.log("rootK: %d",rootK);
+            console.log("rootKLast: %d",rootKLast);
+            if (rootK > rootKLast) {
+                uint numerator = totalSupply.mul(rootK.sub(rootKLast));
+                console.log("numerator: %d",numerator);
+                uint denominator = rootK.mul(5).add(rootKLast);
+                console.log("denominator: %d",denominator);
+                uint liquidity = numerator / denominator;
+                console.log("liquidity: %d",liquidity);
+                if (liquidity > 0) _mint(feeTo, liquidity);
             }
         } else if (_kLast != 0) {
             kLast = 0;
@@ -141,8 +139,8 @@ contract UniswapV2Pair is UniswapV2ERC20 {
         uint amount1 = balance1.sub(_reserve1);
         console.log("amount1: %d",amount1);
 
-        // bool feeOn = _mintFee(uint112(balance0), uint112(balance1));
-        bool feeOn = _mintFee(_reserve0, _reserve1);
+        bool feeOn = _mintFee(uint112(amount0), uint112(amount1));
+        // bool feeOn = _mintFee(_reserve0, _reserve1);
         uint _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         if (_totalSupply == 0) {
             address migrator = IUniswapV2Factory(factory).migrator();
